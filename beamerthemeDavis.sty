@@ -1,0 +1,301 @@
+% Name           : beamerthemeDavis.sty
+% Author         : Furkan TOPTAŞ / Serdar ATEŞ / Bilal BAŞULAŞ
+% Version        : 0.1
+% Created on     : 12.01.2020
+% Copyright      : Copyright (c) 2020 by OSTS. All rights reserved.
+% License        : This file may be distributed and/or modified under the
+%                  GNU Public License.
+% Description    : Beamer theme with LIP6/UPMC inspired design.
+%                  Based on HSRM Beamer Theme by Benjamin Weiss
+%                  (https://github.com/benjamin-weiss/hsrmbeamertheme)
+
+\ProvidesPackage{beamerthemeDavis}[2018/03/22]
+
+\usepackage{eso-pic}
+\usepackage{tikz}
+\usepackage{pdfpages}
+\usepackage{hyperref}
+\usepackage{pbox}
+
+\newif\if@doSectionPage
+\@doSectionPagefalse
+\DeclareOption{nosectionpages}{\@doSectionPagetrue}
+
+\newif\if@doCompressMiniframes
+\@doCompressMiniframesfalse
+\DeclareOption{compressminiframes}{\@doCompressMiniframestrue}
+
+\newif\if@doFlama
+\@doFlamafalse
+\DeclareOption{flama}{\@doFlamatrue}
+
+\ProcessOptions
+
+\mode<presentation>
+
+%---------------------------------------------------------------------
+% TOC
+%---------------------------------------------------------------------
+\useoutertheme[subsection=false,shadow]{miniframes}
+\setbeamertemplate{section in toc}[sections numbered]
+\setbeamertemplate{subsection in toc}[subsections numbered]
+\useinnertheme{rectangles}
+
+\if@doCompressMiniframes%
+\patchcmd{\slideentry}{\advance\beamer@tempdim by -.05cm}{\advance\beamer@tempdim by\beamer@vboxoffset\advance\beamer@tempdim by\beamer@boxsize\advance\beamer@tempdim by 1.2\pgflinewidth}{}{}
+\patchcmd{\slideentry}{\kern\beamer@tempdim}{\advance\beamer@tempdim by 2pt\advance\beamer@tempdim by\wd\beamer@sectionbox\kern\beamer@tempdim}{}{}
+\fi%
+
+\let\beamer@writeslidentry@miniframeson=\beamer@writeslidentry
+\def\beamer@writeslidentry@miniframesoff{%
+	\expandafter\beamer@ifempty\expandafter{\beamer@framestartpage}{}% does not happen normally
+	{%else
+		% removed \addtocontents commands
+		\clearpage\beamer@notesactions%
+	}
+}
+\newcommand*{\miniframeson}{\let\beamer@writeslidentry=\beamer@writeslidentry@miniframeson}
+\newcommand*{\miniframesoff}{\let\beamer@writeslidentry=\beamer@writeslidentry@miniframesoff}
+
+\newcommand{\backupbegin}{
+	\newcounter{framenumberappendix}
+	\setcounter{framenumberappendix}{\value{framenumber}}
+}
+\newcommand{\backupend}{
+	\addtocounter{framenumberappendix}{-\value{framenumber}}
+	\addtocounter{framenumber}{\value{framenumberappendix}}
+}
+
+%---------------------------------------------------------------------
+% Captions with numbers
+%---------------------------------------------------------------------
+\setbeamertemplate{caption}[numbered]
+
+\setlength{\parskip}{0.5em}
+
+%---------------------------------------------------------------------
+% TOC
+%---------------------------------------------------------------------
+
+\setbeamerfont{section in toc}{shape=\sc,size=\large}
+\setbeamerfont{subsection in toc}{size=\small}
+%\pretocmd{\beamer@sectionintoc}{\vspace{-0.18cm}}{}{} % uncomment for more compact spacing btwn sections in toc
+%\pretocmd{\beamer@subsectionintoc}{\vspace{-0.18cm}}{}{} % uncomment for more compact spacing btwn  sub-sections in toc
+
+%---------------------------------------------------------------------
+% Colors
+%---------------------------------------------------------------------
+
+% Primary Colors
+\definecolor{DavisBlueDark}{rgb}{0.004,0.0,0.509}  % bleu foncé logo
+\definecolor{DavisBlueMid}{rgb}{0.141176471,0.160784314,0.329411765} % bleu foncé logo éclairci 
+\definecolor{DavisBlueLight}{rgb}{0.89019608,0.91372549,0.92941176}
+
+%\definecolor{DavisRedDark}{rgb}{0.588235294,0,0.058823529}
+\definecolor{DavisGold}{rgb}{0.663,0.408,0.047}
+\definecolor{DavisGoldDark}{rgb}{0.663,0.408,0.047}
+\definecolor{DavisGoldLight}{rgb}{.965,.792,0.541}
+
+\definecolor{DavisBlue2Dark}{rgb}{0.117647059,0.345098039,0.454901961} % bleu ciel logo Davis eclairci
+\definecolor{DavisBlue2Mid}{rgb}{0.325490196,0.662745098,0.82745098} % bleu ciel logo Davis
+\definecolor{DavisBlue2Light}{rgb}{0.862745098,0.933333333,0.964705882} % bleu ciel logo assombri
+
+%\definecolor{DavisGreen}{rgb}{0.4745098,0.7254902,0.29411765}
+%\definecolor{DavisGreenDark}{rgb}{0.25882353,0.42745098,0.21568627}
+
+% General
+\setbeamercolor{normal text}{fg=DavisBlueDark}
+\setbeamercolor{structure}{fg=DavisBlueDark}
+\setbeamercolor{alerted text}{fg=white}
+\setbeamercolor{example text}{fg=white}
+\setbeamercolor{copyright text}{fg=DavisBlueLight}
+\setbeamercolor{palette primary}{fg=DavisBlueDark}
+\setbeamercolor{palette secondary}{fg=DavisBlueDark,bg=DavisBlueLight}
+\setbeamercolor{palette tertiary}{fg=black,bg=DavisBlueLight}
+\setbeamercolor{palette quaternary}{fg=white, bg=DavisBlueDark}
+% Header
+\setbeamercolor{section in head/foot}{fg=DavisBlueLight,bg=DavisBlueMid}
+% Titlepage
+\setbeamercolor{title}{parent=normal text, fg=DavisBlueDark}
+\setbeamercolor{subtitle}{parent=normal text, fg=DavisBlueDark}
+\setbeamercolor{institute}{parent=normal text, fg=DavisBlueDark}
+\setbeamercolor{author}{fg=DavisBlueDark}
+\setbeamercolor{date}{fg=DavisBlueDark}
+% Content
+\setbeamercolor{frametitle}{parent=palette quaternary}
+% Blocks
+\setbeamercolor{block title}{parent=palette quaternary}
+\setbeamercolor{block body}{parent=palette secondary}
+\setbeamercolor{block title example}{fg=white, bg=DavisBlue2Mid}
+\setbeamercolor{block body example}{fg=DavisBlue2Dark, bg=DavisBlue2Light}
+\setbeamercolor{block title alerted}{fg=white, bg=DavisGold}
+\setbeamercolor{block body alerted}{fg=DavisGoldDark, bg=DavisGoldLight}
+% Notes
+\setbeamercolor{note page}{fg=DavisBlueDark,bg=DavisBlueLight}
+\setbeamercolor{note title}{fg=white, bg=DavisBlueDark}
+\setbeamercolor{note date}{parent=note title}
+% Page Number
+\setbeamercolor{page number in head/foot}{fg=DavisBlueDark}
+
+%---------------------------------------------------------------------
+% Fonts
+%---------------------------------------------------------------------
+
+% Titlepage
+\setbeamerfont{title}{size=\fontsize{20}{20}}
+\setbeamerfont{subtitle}{size=\fontsize{12}{14}}
+\setbeamerfont{date}{size=\fontsize{8}{10}}
+\setbeamerfont{author}{size=\fontsize{12}{15}}
+\setbeamerfont{institute}{size=\fontsize{8}{10}}
+% Section
+\setbeamerfont{section title}{size=\LARGE}
+% Content
+\setbeamerfont{frametitle}{size=\large}
+\setbeamerfont{copyright text}{size=\tiny}
+\setbeamerfont{block title}{size=\large}
+\setbeamerfont{block title alerted}{size=\large}
+
+\if@doFlama%
+	\usepackage{fontspec}
+
+	% Load font
+	\newfontfamily\Light{Flama-Light}
+	\newfontfamily\Book{Flama-Book}
+	\newfontfamily\Medium{Flama-Medium}
+	\setsansfont[BoldFont={Flama-Basic},ItalicFont={Flama-Light-Italic},BoldItalicFont={Flama-Basic-Italic}]{Flama-Light}
+
+	% Fontstyle
+	\setbeamerfont{title}{family=\Light}
+	\setbeamerfont{subtitle}{family=\Light}
+	\setbeamerfont{frametitle}{family=\Light}
+	\setbeamerfont{copyright text}{family=\Light}
+	\setbeamerfont{block title}{family=\Book}
+	\setbeamerfont{block title alerted}{family=\Book}
+	\setbeamerfont{alerted text}{family=\Medium}
+	\setbeamerfont{caption name}{family=\Book}
+	\renewcommand\UrlFont{\Book}
+
+	% Itemize
+	\newcommand{\rightTextArrow}{→}
+	\setbeamertemplate{itemize item}{\rightTextArrow}
+	\setbeamertemplate{itemize subitem}{\rightTextArrow}
+	\setbeamertemplate{itemize subsubitem}{\rightTextArrow}
+\fi
+
+%---------------------------------------------------------------------
+% Titlepage
+%---------------------------------------------------------------------
+
+% Titlepage structure
+\def\maketitle{\ifbeamer@inframe\titlepage\else\frame[plain]{\titlepage}\fi}
+\def\titlepage{\usebeamertemplate{title page}}
+\setbeamertemplate{title page}
+{
+	% Add background to title page
+	\begin{tikzpicture}[overlay]
+	%	\node at (5.41,-4.75) {\includegraphics[width=\paperwidth, height = \paperheight]{images/Davis-background.pdf}};
+	\end{tikzpicture}
+
+	\hspace*{0.1\textwidth}
+	\begin{minipage}[b][\paperheight]{0.9\textwidth}
+	%\vspace*{5mm}
+	%\includegraphics[height=14mm]{images/logos}\par
+	\vspace*{20mm}
+	\ifx\inserttitle\@empty%
+	\else%
+		{\usebeamerfont{title}\usebeamercolor[fg]{title}\MakeUppercase{\inserttitle}\par}%
+	\fi%
+	\ifx\insertsubtitle\@empty%
+	\else%
+		{\usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle\par}%
+		\vspace*{5mm}
+	\fi%
+	\ifx\insertdate\@empty%
+	\else%
+		{\usebeamerfont{date}\usebeamercolor[fg]{date}\insertdate\par}%
+	\fi%
+
+    %\vspace*{13mm}
+
+	\vfill
+
+	\ifx\insertauthor\@empty%
+	\else%
+		{\usebeamerfont{author}\usebeamercolor[fg]{author}\insertauthor\par}%
+	\fi%
+	\ifx\insertinstitut\@empty%
+	\else%
+		\vspace*{3mm}
+		{\usebeamerfont{institute}\usebeamercolor[fg]{institute}\insertinstitute\par}%
+	\fi%
+	\vspace*{17.5mm}
+	\end{minipage}
+}
+
+%---------------------------------------------------------------------
+% Sectionpages
+%---------------------------------------------------------------------
+
+\if@doSectionPage\@empty
+\else
+% Insert frame with section title at every section start
+\AtBeginSection[]
+{
+\begingroup
+\setbeamercolor{background canvas}{bg=DavisBlueDark}
+\begin{frame}[plain]
+\centering
+\vfill\usebeamerfont{section title}\textcolor{white}{\Huge\textsc{\insertsection}}\vfill
+\end{frame}
+\addtocounter{framenumber}{-1}
+\endgroup
+}
+\fi
+
+%---------------------------------------------------------------------
+% Frametitle
+%---------------------------------------------------------------------
+
+\setbeamertemplate{frametitle}
+{
+\vspace*{-.4mm}
+\begin{beamercolorbox}[wd=\paperwidth,leftskip=0.3cm,rightskip=0.3cm,ht=3ex,dp=1.5ex]{frametitle}
+  \ifx\insertframesubtitle\empty
+      \usebeamerfont{frametitle}\insertframetitle%
+    \else
+    \usebeamerfont{frametitle}\insertframetitle~{-- \large\it \insertframesubtitle}%
+\fi
+% \hfill \raisebox{-1.5mm}{\includegraphics[width= 2.5cm]{images/UC-Davis-Psych-Dep-Logo- fixed.jpg}}
+\end{beamercolorbox}
+}
+
+%%---------------------------------------------------------------------
+%% Footline
+%%---------------------------------------------------------------------
+\newcommand{\insertfoottitle}{\inserttitle}
+
+\newcommand{\foottitle}[1]{
+	\renewcommand{\insertfoottitle}{#1}
+}
+
+\newcommand{\speaker}[1]{
+	\renewcommand{\insertspeaker}{#1}
+}
+\newcommand{\insertspeaker}{}
+
+\usenavigationsymbolstemplate{}
+\setbeamertemplate{footline}
+{%
+\begin{beamercolorbox}[wd=\textwidth,ht=3ex,dp=1.5ex,leftskip=0.3cm,rightskip=0.3cm]{structure}%
+\ifthenelse{\equal{\insertspeaker}{}}{
+	\insertfoottitle
+}{
+	\insertfoottitle{} -- \insertspeaker
+}
+\hfill\usebeamerfont{page number in head/foot}%
+\insertframenumber /\inserttotalframenumber%
+\end{beamercolorbox}%
+}
+
+\mode
+<all>
